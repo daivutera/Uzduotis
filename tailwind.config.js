@@ -4,7 +4,19 @@ module.exports = {
   theme: {
     extend: {
       gridTemplateColumns: {
-        20: 'repeat(20, minmax(0, 1fr))', // default size for small screens
+        custom: 'repeat(3, 1fr) 5fr',
+        custom2: 'repeat(19, 1fr) 8fr',
+      },
+      screens: {
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+      },
+      colors: {
+        end: '#588F44',
+        start: '#7ED321',
+        path: '#F39C12',
       },
     },
   },

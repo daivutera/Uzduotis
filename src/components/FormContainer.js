@@ -2,13 +2,18 @@ import React from 'react';
 import Input from './Input';
 import Button from './Button';
 import { useSetAtom } from 'jotai';
-import { generateGridAtom } from './formContainer.atoms';
+import {
+  generateGridAtom,
+  generateInitialGridAtom,
+} from './formContainer.atoms';
 
 const FormContainer = () => {
   const setGenerateGrid = useSetAtom(generateGridAtom);
+  const setGenerateInitialGrid = useSetAtom(generateInitialGridAtom);
   const handleSubmit = (event) => {
     event.preventDefault();
     setGenerateGrid(true);
+    setGenerateInitialGrid(false);
   };
   return (
     <form
