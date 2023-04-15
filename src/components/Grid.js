@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { updateGridAtom, newInputValuesAtom } from './formContainer.atoms';
+import { Grid as PathfindingGrid, AStarFinder } from 'pathfinding';
 
 const Grid = () => {
   const [updateGrid, setUpdateGrid] = useAtom(updateGridAtom);
@@ -8,16 +9,53 @@ const Grid = () => {
   const initialValues = { rows: 10, columns: 10 };
   const inputValueGenerated = newInputValue || initialValues;
 
+  const grid = new PathfindingGrid(
+    inputValueGenerated.columns,
+    inputValueGenerated.rows
+  );
   const onClick = (event) => {
-    if (event.target.classList.contains('bg-start')) {
-      return;
-    } else if (event.target.classList.contains('bg-end')) {
+    const startDiv = document.querySelector('.bg-start');
+    const endDiv = document.querySelector('.bg-end');
+    const startRow = Number(startDiv.dataset.row);
+    const startColumn = Number(startDiv.dataset.column);
+    const endRow = Number(endDiv.dataset.row);
+    const endColumn = Number(endDiv.dataset.column);
+
+    const finder = new AStarFinder({
+      diagonalMovement: false,
+    });
+
+    if (
+      event.target.classList.contains('bg-start') ||
+      event.target.classList.contains('bg-end')
+    ) {
       return;
     } else if (event.target.classList.contains('bg-white')) {
       event.target.classList.remove('bg-white');
+      grid.setWalkableAt(
+        event.target.dataset.column,
+        event.target.dataset.row,
+        false
+      );
       return;
     }
     event.target.classList.add('bg-white');
+
+    grid.setWalkableAt(
+      event.target.dataset.column,
+      event.target.dataset.row,
+      true
+    );
+
+    const path = finder.findPath(
+      startColumn,
+      startRow,
+      endColumn,
+      endRow,
+      grid
+    );
+    console.log(path, 'path');
+    console.log('walkable', grid.nodes);
   };
 
   const createGridRows = (
@@ -30,17 +68,20 @@ const Grid = () => {
     const gridDivs = [];
 
     for (let i = 0; i < rowsNumber; i++) {
-      const selectGridColor = () => {
+      const selectGridColor = (row, column) => {
         let colorClass = '';
-        if (columnIndex === 0 && randomValueForStart === i) {
+
+        colorClass = 'bg-slate-200';
+        grid.setWalkableAt(column, row, false);
+        if (column === 0 && randomValueForStart === row) {
+          console.log('patekau i start');
           colorClass = 'bg-start';
-        } else if (
-          columnIndex === columnsNumber - 1 &&
-          randomValueForEnd === i
-        ) {
+          grid.setWalkableAt(column, row, true);
+        }
+        if (column === columnsNumber - 1 && randomValueForEnd === row) {
+          console.log('patekau i end');
           colorClass = 'bg-end';
-        } else {
-          colorClass = 'bg-slate-200';
+          grid.setWalkableAt(column, row, true);
         }
         return colorClass;
       };
@@ -48,7 +89,12 @@ const Grid = () => {
         <div
           key={i}
           id={`grid-row-${i}`}
-          className={`h-12 w-12 border border-slate-300 ${selectGridColor()} hover:bg-slate-100`}
+          data-row={i}
+          data-column={columnIndex}
+          className={`h-12 w-12 border border-slate-300 ${selectGridColor(
+            i,
+            columnIndex
+          )} hover:bg-slate-100`}
           onClick={onClick}></div>
       );
     }
@@ -56,7 +102,6 @@ const Grid = () => {
   };
 
   const createGridColumns = () => {
-    console.log(newInputValue, 'newinputvalue');
     const randomValueForStart = Math.floor(
       Math.random() *
         (inputValueGenerated.rows > 0
