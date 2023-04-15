@@ -30,7 +30,9 @@ const UiStates = () => {
     return listOfGridDivButtons.map((item) => (
       <div className='-ml-2'>
         <p className='-mb-4 ml-2 text-xs text-slate-800'>{item.nameButton}</p>
-        <Button color={item.color}>Generate</Button>
+        <Button key={item.nameDiv} color={item.color}>
+          Generate
+        </Button>
       </div>
     ));
   };
