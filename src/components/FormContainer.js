@@ -1,19 +1,28 @@
 import React from 'react';
 import Input from './Input';
 import Button from './Button';
-import { useSetAtom } from 'jotai';
+import { useSetAtom, useAtom } from 'jotai';
 import {
   generateGridAtom,
   generateInitialGridAtom,
+  updateGridAtom,
+  newInputValuesAtom,
 } from './formContainer.atoms';
+import { inputValueAtom } from './input.atoms';
 
 const FormContainer = () => {
   const setGenerateGrid = useSetAtom(generateGridAtom);
   const setGenerateInitialGrid = useSetAtom(generateInitialGridAtom);
+  const setUpdateGrid = useSetAtom(updateGridAtom);
+  const [inputValue] = useAtom(inputValueAtom);
+
+  const setNewInputValue = useSetAtom(newInputValuesAtom);
   const handleSubmit = (event) => {
     event.preventDefault();
     setGenerateGrid(true);
     setGenerateInitialGrid(false);
+    setUpdateGrid(true);
+    setNewInputValue(inputValue);
   };
   return (
     <form
@@ -22,9 +31,6 @@ const FormContainer = () => {
       <Input
         inputName='rows'
         inputType='number'
-        handleInputChange={() => {
-          console.log('hello');
-        }}
         minValue='0'
         maxValue='20'
         labelFor='Rows'
@@ -34,9 +40,6 @@ const FormContainer = () => {
       <Input
         inputName='columns'
         inputType='number'
-        handleInputChange={() => {
-          console.log('hello');
-        }}
         minValue='0'
         maxValue='20'
         labelFor='Columns'

@@ -1,17 +1,12 @@
 import React, { useEffect } from 'react';
-import { useAtom, useSetAtom } from 'jotai';
-import { inputValueAtom } from './input.atoms';
-import {
-  generateGridAtom,
-  generateInitialGridAtom,
-} from './formContainer.atoms';
+import { useAtom } from 'jotai';
+import { updateGridAtom, newInputValuesAtom } from './formContainer.atoms';
 
 const Grid = () => {
-  const [generateGrid] = useAtom(generateGridAtom);
-  const [generateInitialGrid] = useAtom(generateInitialGridAtom);
-  const setGenerateGrid = useSetAtom(generateGridAtom);
-  const [inputValue] = useAtom(inputValueAtom);
+  const [updateGrid, setUpdateGrid] = useAtom(updateGridAtom);
+  const [newInputValue] = useAtom(newInputValuesAtom);
   const initialValues = { rows: 10, columns: 10 };
+  const inputValueGenerated = newInputValue || initialValues;
 
   const onClick = (event) => {
     if (event.target.classList.contains('bg-start')) {
@@ -63,55 +58,45 @@ const Grid = () => {
   const createGridColumns = () => {
     const randomValueForStart = Math.floor(
       Math.random() *
-        (inputValue.rows > 0 ? inputValue.rows : initialValues.rows)
+        (inputValueGenerated.rows > 0
+          ? inputValueGenerated.rows
+          : initialValues.rows)
     );
     const randomValueForEnd = Math.floor(
       Math.random() *
-        (inputValue.rows > 0 ? inputValue.rows : initialValues.rows)
+        (inputValueGenerated.rows > 0
+          ? inputValueGenerated.rows
+          : initialValues.rows)
     );
-    if (generateGrid) {
-      const gridColumns = [];
 
-      for (let i = 0; i < inputValue.columns; i++) {
-        gridColumns.push(
-          <div key={i} className='h-12 w-12'>
-            {createGridRows(
-              i,
-              randomValueForStart,
-              randomValueForEnd,
-              inputValue.rows,
-              inputValue.columns
-            )}
-          </div>
-        );
-      }
-      return gridColumns;
-    } else if (!generateGrid && inputValue && generateInitialGrid) {
-      const gridColumns = [];
-      for (let i = 0; i < initialValues.columns; i++) {
-        gridColumns.push(
-          <div key={i} className='h-12 w-12'>
-            {createGridRows(
-              i,
-              randomValueForStart,
-              randomValueForEnd,
-              initialValues.rows,
-              initialValues.columns
-            )}
-          </div>
-        );
-      }
-      return gridColumns;
+    const gridColumns = [];
+
+    for (let i = 0; i < inputValueGenerated.columns; i++) {
+      gridColumns.push(
+        <div key={i} className='h-12 w-12'>
+          {createGridRows(
+            i,
+            randomValueForStart,
+            randomValueForEnd,
+            inputValueGenerated.rows,
+            inputValueGenerated.columns
+          )}
+        </div>
+      );
     }
+    setUpdateGrid(false);
+    console.log('updateGrid1', updateGrid);
+    return gridColumns;
   };
 
   useEffect(() => {
-    setGenerateGrid(false);
-    createGridRows();
-  }, [inputValue]);
+    createGridColumns();
+  }, [newInputValue, updateGrid]);
 
   const height = `${
-    inputValue.rows > 0 ? inputValue.rows * 50 : initialValues.rows * 50
+    inputValueGenerated.rows > 0
+      ? inputValueGenerated.rows * 50
+      : initialValues.rows * 50
   }`;
 
   return (

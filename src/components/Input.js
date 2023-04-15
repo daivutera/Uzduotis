@@ -5,7 +5,6 @@ import { inputValueAtom } from './input.atoms';
 const Input = ({
   inputName,
   inputType,
-  handleInputChange,
   minValue,
   maxValue,
   labelFor,
@@ -28,8 +27,6 @@ const Input = ({
         [name]: value,
       }));
     }
-
-    handleInputChange(event);
   };
 
   return (
@@ -42,7 +39,7 @@ const Input = ({
         id={inputName}
         name={inputName}
         type={inputType}
-        value={inputValue[inputName]}
+        value={inputValue[inputName] > 0 ? inputValue[inputName] : 10}
         onChange={handleInput}
         min={minValue}
         max={maxValue}
