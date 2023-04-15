@@ -11,6 +11,7 @@ const Input = ({
   labelName,
 }) => {
   const [inputValue, setInputValue] = useAtom(inputValueAtom);
+  const defaultGridDimensionValue = 10;
 
   const handleInput = (event) => {
     event.preventDefault();
@@ -19,7 +20,7 @@ const Input = ({
     if (value < 1 || value > 20) {
       setInputValue((prevInputValue) => ({
         ...prevInputValue,
-        [name]: '',
+        [name]: defaultGridDimensionValue,
       }));
     } else {
       setInputValue((prevInputValue) => ({

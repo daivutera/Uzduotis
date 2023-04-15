@@ -56,6 +56,7 @@ const Grid = () => {
   };
 
   const createGridColumns = () => {
+    console.log(newInputValue, 'newinputvalue');
     const randomValueForStart = Math.floor(
       Math.random() *
         (inputValueGenerated.rows > 0
