@@ -31,3 +31,6 @@ When the path is found you cannot use the same generated grid, you need to gener
 ### How to start the project:
 
 npm install
+
+for Tailwind if you need any changes you need to run:
+npx tailwindcss -i ./src/index.css -o ./dist/output.css --watch
