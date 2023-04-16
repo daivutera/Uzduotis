@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { updateGridAtom, newInputValuesAtom } from './formContainer.atoms';
-import { Grid as PathfindingGrid, AStarFinder } from 'pathfinding';
+import {
+  Grid as PathfindingGrid,
+  AStarFinder,
+  DiagonalMovement,
+} from 'pathfinding';
 
 const Grid = () => {
   const [updateGrid, setUpdateGrid] = useAtom(updateGridAtom);
@@ -13,6 +17,9 @@ const Grid = () => {
     inputValueGenerated.columns,
     inputValueGenerated.rows
   );
+  const finder = new AStarFinder({
+    diagonalMovement: DiagonalMovement.Never,
+  });
   const onClick = (event) => {
     const startDiv = document.querySelector('.bg-start');
     const endDiv = document.querySelector('.bg-end');
@@ -20,11 +27,6 @@ const Grid = () => {
     const startColumn = Number(startDiv.dataset.column);
     const endRow = Number(endDiv.dataset.row);
     const endColumn = Number(endDiv.dataset.column);
-
-    const finder = new AStarFinder({
-      diagonalMovement: false,
-    });
-
     if (
       event.target.classList.contains('bg-start') ||
       event.target.classList.contains('bg-end')
@@ -54,8 +56,80 @@ const Grid = () => {
       endRow,
       grid
     );
+
     console.log(path, 'path');
     console.log('walkable', grid.nodes);
+    console.log('grid', grid);
+    // `grid` is your 2D array of nodes
+    console.log('node', grid.nodes);
+
+    function findConnectedNodes(grid) {
+      const connectedNodes = [];
+      const visitedNodes = new Set();
+
+      // DFS helper function
+      function dfs(row, col) {
+        const node = grid.nodes[row][col];
+        visitedNodes.add(node);
+
+        // Check adjacent nodes
+        const adjacents = [
+          [row - 1, col], // Top
+          [row + 1, col], // Bottom
+          [row, col - 1], // Left
+          [row, col + 1], // Right
+        ];
+
+        for (const [r, c] of adjacents) {
+          if (
+            r >= 0 &&
+            r < grid.nodes.length &&
+            c >= 0 &&
+            c < grid.nodes[0].length
+          ) {
+            const adjacentNode = grid.nodes[r][c];
+            if (!visitedNodes.has(adjacentNode) && adjacentNode.walkable) {
+              connectedNodes.push([r, c]);
+              dfs(r, c);
+            }
+          }
+        }
+      }
+
+      // Find connected nodes
+      for (let row = 0; row < grid.nodes.length; row++) {
+        for (let col = 0; col < grid.nodes[0].length; col++) {
+          const node = grid.nodes[row][col];
+          if (node.walkable && !visitedNodes.has(node)) {
+            connectedNodes.push([row, col]);
+            dfs(row, col);
+          }
+        }
+      }
+
+      return connectedNodes;
+    }
+    console.log('nodespath', findConnectedNodes(grid));
+
+    function isPathConnected(path) {
+      for (let i = 0; i < path.length - 1; i++) {
+        const [row1, col1] = path[i];
+        const [row2, col2] = path[i + 1];
+
+        if (
+          Math.abs(row1 - row2) > 1 ||
+          Math.abs(col1 - col2) > 1 ||
+          (row1 !== row2 && col1 !== col2)
+        ) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    console.log('isPathConnected', isPathConnected(findConnectedNodes(grid)));
+
+    console.log('nodespath', findConnectedNodes(grid));
   };
 
   const createGridRows = (
@@ -115,7 +189,9 @@ const Grid = () => {
           ? inputValueGenerated.rows
           : initialValues.rows)
     );
-
+    document.querySelectorAll('.bg-white').forEach((div) => {
+      div.classList.remove('bg-white');
+    });
     const gridColumns = [];
 
     for (let i = 0; i < inputValueGenerated.columns; i++) {
@@ -133,6 +209,7 @@ const Grid = () => {
     }
     setUpdateGrid(false);
     console.log('updateGrid1', updateGrid);
+
     return gridColumns;
   };
 
