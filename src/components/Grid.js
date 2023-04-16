@@ -74,12 +74,13 @@ const Grid = () => {
         colorClass = 'bg-slate-200';
         grid.setWalkableAt(column, row, false);
         if (column === 0 && randomValueForStart === row) {
-          console.log('patekau i start');
+          console.log('patekau i start', 'col', column, 'row', row);
           colorClass = 'bg-start';
+
           grid.setWalkableAt(column, row, true);
         }
         if (column === columnsNumber - 1 && randomValueForEnd === row) {
-          console.log('patekau i end');
+          console.log('patekau i end', 'col', column, 'row', row);
           colorClass = 'bg-end';
           grid.setWalkableAt(column, row, true);
         }
@@ -137,7 +138,7 @@ const Grid = () => {
 
   useEffect(() => {
     createGridColumns();
-  }, [newInputValue, updateGrid]);
+  }, [updateGrid]);
 
   const height = `${
     inputValueGenerated.rows > 0
