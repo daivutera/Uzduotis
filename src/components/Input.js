@@ -40,7 +40,11 @@ const Input = ({
         id={inputName}
         name={inputName}
         type={inputType}
-        value={inputValue[inputName] > 0 ? inputValue[inputName] : 10}
+        value={
+          inputValue[inputName] > 0
+            ? inputValue[inputName]
+            : defaultGridDimensionValue
+        }
         onChange={handleInput}
         min={minValue}
         max={maxValue}

@@ -16,7 +16,7 @@ module.exports = {
       colors: {
         end: '#588F44',
         start: '#7ED321',
-        path: '#F39C12',
+        path: '#eab308',
       },
     },
   },

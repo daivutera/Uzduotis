@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from './Button';
 import UIStatesDiv from './UIStatesDiv';
+import KeyGenerator from '@omer_bhatti/react-keys';
 
 const UiStates = () => {
   const listOfGridDivSamples = [
@@ -28,9 +29,15 @@ const UiStates = () => {
   };
   const generateUiStatesButtons = () => {
     return listOfGridDivButtons.map((item) => (
-      <div className='-ml-2'>
-        <p className='-mb-4 ml-2 text-xs text-slate-800'>{item.nameButton}</p>
-        <Button color={item.color}>Generate</Button>
+      <div key={KeyGenerator.getKey()} className='-ml-2'>
+        <p
+          key={KeyGenerator.getKey()}
+          className='-mb-4 ml-2 text-xs text-slate-800'>
+          {item.nameButton}
+        </p>
+        <Button key={item.nameButton} color={item.color}>
+          Generate
+        </Button>
       </div>
     ));
   };
